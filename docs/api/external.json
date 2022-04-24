@@ -1,0 +1,671 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Madrid Recicla API",
+        "description": "Madrid Recicla API provides backend support to Madrid Recicla suite, allowing functionalities like listing and uploading data on Geospatial recycling points of interest.",
+        "contact": {
+            "name": "Carlos Martínez",
+            "email": "ingcarlosmartinez@icloud.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "externalDocs": {
+        "description": "Find out more about Madrid Recicla",
+        "url": "https://github.com/madrid-recicla"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080"
+        }
+    ],
+    "paths": {
+        "/v1/containers/clothes": {
+            "get": {
+                "summary": "Lists clothes containers.",
+                "description": "Lists clothes containers near a given location. The response is presented in plain locations format or GeoJSON formats, depending on the `Response-Format` header.",
+                "operationId": "listClothesContainers",
+                "tags": [
+                    "Clothes Containers"
+                ],
+                "parameters": [
+                    {
+                        "name": "Response-Format",
+                        "in": "header",
+                        "description": "Indicates how the response should be presented. Accepted values are `Basic` and `FeatureCollection`, case insensitive, being the later the default one. In both cases, the response is a JSON but the structure is plain locations or GeoJSON locations respectively.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "FeatureCollection"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of clothes containers.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClothesContainersResponse"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "unexpected error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ClothesContainersResponse": {
+                "type": "object",
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/BasicCollection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/FeatureCollection"
+                    }
+                ],
+                "discriminator": {
+                    "propertyName": "type",
+                    "mapping": {
+                        "Basic": "#/components/schemas/BasicCollection",
+                        "FeatureCollection": "#/components/schemas/FeatureCollection"
+                    }
+                }
+            },
+            "BasicCollection": {
+                "description": "A basic representation of points of interest.",
+                "type": "object",
+                "required": [
+                    "properties",
+                    "name"
+                ],
+                "properties": {
+                    "properties": {
+                        "$ref": "#/components/schemas/ContainerProperties"
+                    },
+                    "location": {
+                        "$ref": "#/components/schemas/Location"
+                    }
+                }
+            },
+            "ContainerProperties": {
+                "type": "object",
+                "required": [
+                    "title"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Location": {
+                "type": "object",
+                "required": [
+                    "latitude",
+                    "longitude"
+                ],
+                "properties": {
+                    "latitude": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "longitude": {
+                        "type": "number",
+                        "format": "double"
+                    }
+                }
+            },
+            "FeatureCollection": {
+                "title": "GeoJSON FeatureCollection",
+                "type": "object",
+                "required": [
+                    "type",
+                    "features"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "FeatureCollection"
+                        ]
+                    },
+                    "features": {
+                        "type": "array",
+                        "items": {
+                            "title": "GeoJSON Feature",
+                            "type": "object",
+                            "required": [
+                                "type",
+                                "properties",
+                                "geometry"
+                            ],
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "Feature"
+                                    ]
+                                },
+                                "id": {
+                                    "oneOf": [
+                                        {
+                                            "type": "number"
+                                        },
+                                        {
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                "properties": {
+                                    "oneOf": [
+                                        {
+                                            "type": "object"
+                                        }
+                                    ]
+                                },
+                                "geometry": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Point"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/LineString"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/Poligon"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/MultiPoint"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/MultiLineString"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/MultiPolygon"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/GeometryCollection"
+                                        }
+                                    ]
+                                },
+                                "bbox": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Bbox"
+                                }
+                            }
+                        }
+                    },
+                    "bbox": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Bbox"
+                    }
+                }
+            },
+            "Point": {
+                "title": "GeoJSON Point",
+                "type": "object",
+                "required": [
+                    "type",
+                    "coordinates"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "Point"
+                        ]
+                    },
+                    "coordinates": {
+                        "type": "array",
+                        "minItems": 2,
+                        "items": {
+                            "type": "number",
+                            "format": "double"
+                        }
+                    },
+                    "bbox": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Bbox"
+                    }
+                }
+            },
+            "LineString": {
+                "title": "GeoJSON LineString",
+                "type": "object",
+                "required": [
+                    "type",
+                    "coordinates"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "LineString"
+                        ]
+                    },
+                    "coordinates": {
+                        "type": "array",
+                        "minItems": 2,
+                        "items": {
+                            "type": "array",
+                            "minItems": 2,
+                            "items": {
+                                "type": "number"
+                            }
+                        }
+                    },
+                    "bbox": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Bbox"
+                    }
+                }
+            },
+            "Poligon": {
+                "title": "GeoJSON Polygon",
+                "type": "object",
+                "required": [
+                    "type",
+                    "coordinates"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "Polygon"
+                        ]
+                    },
+                    "coordinates": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "minItems": 4,
+                            "items": {
+                                "type": "array",
+                                "minItems": 2,
+                                "items": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "bbox": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Bbox"
+                    }
+                }
+            },
+            "MultiPoint": {
+                "title": "GeoJSON MultiPoint",
+                "type": "object",
+                "required": [
+                    "type",
+                    "coordinates"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "MultiPoint"
+                        ]
+                    },
+                    "coordinates": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "minItems": 2,
+                            "items": {
+                                "type": "number"
+                            }
+                        }
+                    },
+                    "bbox": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Bbox"
+                    }
+                }
+            },
+            "MultiLineString": {
+                "title": "GeoJSON MultiLineString",
+                "type": "object",
+                "required": [
+                    "type",
+                    "coordinates"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "MultiLineString"
+                        ]
+                    },
+                    "coordinates": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "minItems": 2,
+                            "items": {
+                                "type": "array",
+                                "minItems": 2,
+                                "items": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "bbox": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Bbox"
+                    }
+                }
+            },
+            "MultiPolygon": {
+                "title": "GeoJSON MultiPolygon",
+                "type": "object",
+                "required": [
+                    "type",
+                    "coordinates"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "MultiPolygon"
+                        ]
+                    },
+                    "coordinates": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "minItems": 4,
+                                "items": {
+                                    "type": "array",
+                                    "minItems": 2,
+                                    "items": {
+                                        "type": "number"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "bbox": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Bbox"
+                    }
+                }
+            },
+            "GeometryCollection": {
+                "title": "GeoJSON GeometryCollection",
+                "type": "object",
+                "required": [
+                    "type",
+                    "geometries"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "GeometryCollection"
+                        ]
+                    },
+                    "geometries": {
+                        "type": "array",
+                        "items": {
+                            "oneOf": [
+                                {
+                                    "title": "GeoJSON Point",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "coordinates"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Point"
+                                            ]
+                                        },
+                                        "coordinates": {
+                                            "type": "array",
+                                            "minItems": 2,
+                                            "items": {
+                                                "type": "number"
+                                            }
+                                        },
+                                        "bbox": {
+                                            "type": "object",
+                                            "$ref": "#/components/schemas/Bbox"
+                                        }
+                                    }
+                                },
+                                {
+                                    "title": "GeoJSON LineString",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "coordinates"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "type": "string",
+                                            "enum": [
+                                                "LineString"
+                                            ]
+                                        },
+                                        "coordinates": {
+                                            "type": "array",
+                                            "minItems": 2,
+                                            "items": {
+                                                "type": "array",
+                                                "minItems": 2,
+                                                "items": {
+                                                    "type": "number"
+                                                }
+                                            }
+                                        },
+                                        "bbox": {
+                                            "type": "object",
+                                            "$ref": "#/components/schemas/Bbox"
+                                        }
+                                    }
+                                },
+                                {
+                                    "title": "GeoJSON Polygon",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "coordinates"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Polygon"
+                                            ]
+                                        },
+                                        "coordinates": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "array",
+                                                "minItems": 4,
+                                                "items": {
+                                                    "type": "array",
+                                                    "minItems": 2,
+                                                    "items": {
+                                                        "type": "number"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "bbox": {
+                                            "type": "object",
+                                            "$ref": "#/components/schemas/Bbox"
+                                        }
+                                    }
+                                },
+                                {
+                                    "title": "GeoJSON MultiPoint",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "coordinates"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "type": "string",
+                                            "enum": [
+                                                "MultiPoint"
+                                            ]
+                                        },
+                                        "coordinates": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "array",
+                                                "minItems": 2,
+                                                "items": {
+                                                    "type": "number"
+                                                }
+                                            }
+                                        },
+                                        "bbox": {
+                                            "type": "object",
+                                            "$ref": "#/components/schemas/Bbox"
+                                        }
+                                    }
+                                },
+                                {
+                                    "title": "GeoJSON MultiLineString",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "coordinates"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "type": "string",
+                                            "enum": [
+                                                "MultiLineString"
+                                            ]
+                                        },
+                                        "coordinates": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "array",
+                                                "minItems": 2,
+                                                "items": {
+                                                    "type": "array",
+                                                    "minItems": 2,
+                                                    "items": {
+                                                        "type": "number"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "bbox": {
+                                            "type": "object",
+                                            "$ref": "#/components/schemas/Bbox"
+                                        }
+                                    }
+                                },
+                                {
+                                    "title": "GeoJSON MultiPolygon",
+                                    "type": "object",
+                                    "required": [
+                                        "type",
+                                        "coordinates"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "type": "string",
+                                            "enum": [
+                                                "MultiPolygon"
+                                            ]
+                                        },
+                                        "coordinates": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "array",
+                                                    "minItems": 4,
+                                                    "items": {
+                                                        "type": "array",
+                                                        "minItems": 2,
+                                                        "items": {
+                                                            "type": "number"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "bbox": {
+                                            "type": "object",
+                                            "$ref": "#/components/schemas/Bbox"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "bbox": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Bbox"
+                    }
+                }
+            },
+            "Bbox": {
+                "type": "array",
+                "minItems": 4,
+                "items": {
+                    "type": "number"
+                }
+            },
+            "Error": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "BasicAuth": {
+                "type": "http",
+                "scheme": "basic"
+            }
+        }
+    },
+    "security": [
+        {
+            "BasicAuth": []
+        }
+    ]
+}
