@@ -19,3 +19,4 @@ jobs:
           stack: "container"
         env:
           HD_DB_CONNECTION_URI: ${{secrets.DB_CONNECTION_URI}}
+          HD_MAPBOX_TOKEN: ${{secrets.MAPBOX_TOKEN}}

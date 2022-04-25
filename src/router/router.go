@@ -11,6 +11,7 @@ import (
 )
 
 var clothesHandler = handler.NewClothesHandler()
+var mapboxHandler = handler.NewMapboxTokenHandler()
 
 func InitRouter() {
 	log.Println("Initializing HTTP router")
@@ -39,6 +40,12 @@ func configureInternalApi(r *gin.Engine) {
 
 func configureExternalApi(r *gin.Engine) {
 	ex := r.Group("v1/")
+	// Tokens
+	tok := ex.Group("token")
+	{
+		tok.GET("mapbox", mapboxHandler.GetToken())
+	}
+	// Containers
 	con := ex.Group("containers")
 	clo := con.Group("clothes")
 	{

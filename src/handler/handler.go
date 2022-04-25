@@ -8,6 +8,10 @@ import (
 	geojson "github.com/paulmach/go.geojson"
 )
 
+type TokenHandler interface {
+	GetToken() gin.HandlerFunc
+}
+
 type ContainerHandler interface {
 	Load() gin.HandlerFunc
 	ListAll() gin.HandlerFunc

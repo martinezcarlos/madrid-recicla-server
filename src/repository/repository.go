@@ -5,6 +5,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+type TokenRepository interface {
+	GetToken() (string, error)
+}
+
 type ContainerRepository interface {
 	ListAll() (*[]*model.Location, error)
 	ListAllMatching(filter *bson.D) (*[]*model.Location, error)

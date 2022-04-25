@@ -70,7 +70,12 @@ func (h *clothesHandler) ListAll() gin.HandlerFunc {
 
 func (h *clothesHandler) DeleteAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		h.repository.DeleteAll()
+		num, err := h.repository.DeleteAll()
+		if err != nil {
+			respondWithError(c, http.StatusInternalServerError, "Error while deleting ClothContainers", err)
+			return
+		}
+		c.String(http.StatusOK, "%d ClothesContainers deleted", num)
 	}
 }
 
