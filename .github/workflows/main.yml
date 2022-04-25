@@ -18,5 +18,5 @@ jobs:
           usedocker: true
           stack: "container"
         env:
-          DB_CONNECTION_URI: ${{secrets.DB_CONNECTION_URI}}
-          MAPBOX_TOKEN: ${{secrets.MAPBOX_TOKEN}}
+          HD_DB_CONNECTION_URI: ${{secrets.DB_CONNECTION_URI}}
+          HD_MAPBOX_TOKEN: ${{secrets.MAPBOX_TOKEN}}
