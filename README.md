@@ -33,20 +33,22 @@ Check the [external API] and [internal API] definitions for more information.
 Madrid Recicla Server uses a set of environment variables that need to be setup before running the application. To do so, create a file called `.env` in the root directory of the project with proper values for the following keys:
 
 ```sh
-DB_CONNECTION_URI=${DB_CONNECTION_URI}
-PORT=${SERVER_PORT}
-ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+PORT=${SERVER_PORT} # Server port
+DB_CONNECTION_URI=${DB_CONNECTION_URI} # Database connection URI
+DB_NAME=${DATABASE_NAME} # Database name
+ALLOWED_ORIGINS=${ALLOWED_ORIGINS} # CORS origins
+MAPBOX_TOKEN=${MAPBOX_TOKEN} # Mapbox token
 ```
 
 `DB_CONNECTION_URI` uses different formats depending on the environment to connect.
 
 - For local connection, the format is:
     ```sh
-    DB_CONNECTION_URI=mongodb://${SERVER_DB_USER}:${SERVER_DB_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/?authMechanism=SCRAM-SHA-1&authSource=${DATABASE_NAME}
+    DB_CONNECTION_URI=mongodb://${SERVER_DB_USER}:${SERVER_DB_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/?authMechanism=SCRAM-SHA-1&authSource=${DB_NAME}
     ```
 - For remote connection, the format is:
     ```sh
-    DB_CONNECTION_URI=mongodb+srv://${SERVER_DB_USER}:${SERVER_DB_PASSWORD}@${DB_HOST_PRO}/${DATABASE_NAME}?retryWrites=true&w=majority
+    DB_CONNECTION_URI=mongodb+srv://${SERVER_DB_USER}:${SERVER_DB_PASSWORD}@${DB_HOST_PRO}/${DB_NAME}?retryWrites=true&w=majority
     ```
 
 >⚠️ Notice that `.env` file is ignored for commits in `.gitignore` file as this should never be pushed to the repo.
