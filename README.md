@@ -4,7 +4,11 @@
 
 **Madrid Recicla Server** is part of the distributed application **Madrid Recicla**.
 
-Madrid Recicla Server provides backend support to Madrid Recicla suite, allowing functionalities like:
+- [Madrid Recicla Database]
+- [Madrid Recicla Server]
+- [Madrid Recicla Web]
+
+**Madrid Recicla Server** provides backend support to Madrid Recicla suite, allowing functionalities like:
 
 - Geospatial listing of _recycling points of interest_* based on user proximity. 
 - Manual load of static data provided by Comunidad de Madrid.
@@ -13,12 +17,17 @@ Madrid Recicla Server provides backend support to Madrid Recicla suite, allowing
 >\* Recycling points of interest include fixed and mobile recycling points, and different containers for clothes, vegetal oil, batteries, paper and paperboard, glass, plastic, organic and others.
 
 ## Contents <!-- omit in toc -->
+- [Before starting](#before-starting)
 - [Consuming the service](#consuming-the-service)
 - [Developer information](#developer-information)
   - [Environment variables](#environment-variables)
   - [Running the application in a Docker container](#running-the-application-in-a-docker-container)
   - [Running the application in your local machine](#running-the-application-in-your-local-machine)
 - [Others](#others)
+
+## Before starting
+
+Before cloning this repository make sure you've read the [Madrid Recicla Development Template] guide. This guide will help you to setup your local environment.
 
 ## Consuming the service
 
@@ -32,7 +41,7 @@ Check the [external API] and [internal API] definitions for more information.
 
 Madrid Recicla Server uses a set of environment variables that need to be setup before running the application. To do so, create a file called `.env` in the root directory of the project with proper values for the following keys:
 
-```sh
+```properties
 PORT=${SERVER_PORT} # Server port
 DB_CONNECTION_URI=${DB_CONNECTION_URI} # Database connection URI
 DB_NAME=${DATABASE_NAME} # Database name
@@ -113,6 +122,11 @@ You can, however, manually run your server without using Docker by following the
 [![Hex.pm](https://img.shields.io/hexpm/l/plug)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)
 
+<!-- Links -->
+[Madrid Recicla Database]: <https://github.com/martinezcarlos/madrid-recicla-dev-template/blob/main/db/README.md>
+[Madrid Recicla Server]: <https://github.com/martinezcarlos/madrid-recicla-server>
+[Madrid Recicla Web]: <https://github.com/martinezcarlos/madrid-recicla-web>
+[Madrid Recicla Development Template]: <https://github.com/martinezcarlos/madrid-recicla-dev-template>
 [Docker Containers]: <https://docs.docker.com/language/golang/>
 [external API]: <http://localhost:8081>
 [internal API]: <http://localhost:8082>
